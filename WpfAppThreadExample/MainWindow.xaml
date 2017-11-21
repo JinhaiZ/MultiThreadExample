@@ -5,10 +5,39 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfAppThreadExample"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid Margin="0,0,5,4.8">
-        <Button x:Name="premier" Content="Button" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="102,54,0,0" RenderTransformOrigin="1.664,0.342" Click="premier_Click"/>
-        <Button x:Name="ballon" Content="Button" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="319,95,0,0" Click="ballon_Click"/>
-
+        Title="MainWindow" Height="350" Width="525"
+        Closing="Window_Closing">
+    <Grid>
+        <ListView Margin="113,52,143,102.8" Name="lvProcess" BorderBrush="{x:Null}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Thread Number" Width="120" DisplayMemberBinding="{Binding ThreadNumber}" />
+                    <GridViewColumn Header="Type" Width="60" DisplayMemberBinding="{Binding Type}" />
+                    <GridViewColumn Header="ID" Width="60" DisplayMemberBinding="{Binding ID}" />
+                </GridView>
+            </ListView.View>
+            <Button Content="Button" Height="100" Width="75"/>
+        </ListView>
+        <Menu HorizontalAlignment="Left" Height="24" VerticalAlignment="Top" Width="520">
+            <MenuItem Header="Start Thread" Height="24" Width="100">
+                <MenuItem x:Name="startBallon" Header="Start ballon" Click="startBallon_Click">
+                </MenuItem>
+                <MenuItem x:Name="startPremier" Header="Start premier" Click="startPremier_Click"/>
+            </MenuItem>
+            <MenuItem x:Name="stopMenu" Header="Pause/Restart" Height="24" Width="100"/>
+            <MenuItem Header="Stop" Height="24" Width="60" Click="MenuItem_Click" RenderTransformOrigin="0.975,0.378">
+                <MenuItem x:Name="stopLastBallon" Header="Stop last created ballon" Click="stopLastBallon_Click"/>
+                <MenuItem x:Name="StopLastPremier" Header="Stop last created premier" Click="StopLastPremier_Click"/>
+                <MenuItem x:Name="StopLastProcess" Header="Stop last created process" Click="StopLastProcess_Click"/>
+                <MenuItem x:Name="StopAllProcess" Header="Stop all processes" Click="StopAllProcess_Click"/>
+            </MenuItem>
+            <MenuItem Header="Quit" Height="24" Width="100"/>
+        </Menu>
+        <TextBlock HorizontalAlignment="Left" Margin="40,245,0,0" TextWrapping="Wrap" Text="Ballon Count:" VerticalAlignment="Top" RenderTransformOrigin="0.306,0.589"/>
+        <TextBlock HorizontalAlignment="Left" Margin="175,245,0,0" TextWrapping="Wrap" Text="Premier Count:" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="345,245,0,0" TextWrapping="Wrap" Text="Count:" VerticalAlignment="Top"/>
+        <TextBlock x:Name="ballonCountView" HorizontalAlignment="Left" Margin="125,245,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" RenderTransformOrigin="0.306,0.589"/>
+        <TextBlock x:Name="premierCountView" HorizontalAlignment="Left" Margin="267,245,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" RenderTransformOrigin="0.306,0.589"/>
+        <TextBlock x:Name="countView" HorizontalAlignment="Left" Margin="396,245,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" RenderTransformOrigin="0.306,0.589"/>
     </Grid>
 </Window>
