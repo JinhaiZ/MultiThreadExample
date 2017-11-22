@@ -114,6 +114,7 @@ namespace WpfAppThreadExample
                 }
             }
         }
+
         private void stopLastBallon_Click(object sender, RoutedEventArgs e)
         {
             if (listThread.Count <= 0 || ThreadNode.getBallonCount() <= 0)
@@ -137,7 +138,19 @@ namespace WpfAppThreadExample
 
         private void StopLastThread_Click(object sender, RoutedEventArgs e)
         {
-
+            if (listThread.Count <= 0)
+                MessageBox.Show("No running thread", "Alert", MessageBoxButton.OK, MessageBoxImage.Information);
+            else
+            {
+                listThread.Last().thread.Abort();
+                threadViewList.Remove(listThread.Last().threadViewItem);
+                if (listThread.Last().threadViewItem.Type == "ballon")
+                    ThreadNode.setBallonCount(ThreadNode.getBallonCount() - 1);
+                else
+                    ThreadNode.setPremierCount(ThreadNode.getPremierCount() - 1);
+                setViewCounters(ThreadNode.getBallonCount(), ThreadNode.getPremierCount());
+                listThread.RemoveLast();
+            }
         }
 
         private void StopAllThread_Click(object sender, RoutedEventArgs e)
