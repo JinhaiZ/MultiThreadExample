@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfAppThreadExample"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="350" Width="525"
+        Closing="Window_Closing">
     <Grid>
         <ListView Margin="105,52,106,102.8" Name="lvThread" BorderBrush="{x:Null}" ItemsSource="{Binding ThreadViewList}">
             <ListView.View>
@@ -30,7 +31,7 @@
                 <MenuItem x:Name="StopLastThread" Header="Stop last created process" Click="StopLastThread_Click"/>
                 <MenuItem x:Name="StopAllThread" Header="Stop all processes" Click="StopAllThread_Click"/>
             </MenuItem>
-            <MenuItem Header="Quit" Height="24" Width="100"/>
+            <MenuItem x:Name="Quit" Header="Quit" Height="24" Width="100" Click="Quit_Click"/>
         </Menu>
         <TextBlock HorizontalAlignment="Left" Margin="40,245,0,0" TextWrapping="Wrap" Text="Ballon Count:" VerticalAlignment="Top" RenderTransformOrigin="0.306,0.589"/>
         <TextBlock HorizontalAlignment="Left" Margin="175,245,0,0" TextWrapping="Wrap" Text="Premier Count:" VerticalAlignment="Top"/>

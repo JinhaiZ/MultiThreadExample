@@ -114,6 +114,18 @@ namespace WpfAppThreadExample
                 }
             }
         }
+        private void stopAllThread()
+        {
+            foreach (ThreadNode tN in listThread)
+            {
+                tN.thread.Abort();
+                threadViewList.Remove(tN.threadViewItem);
+            }
+            ThreadNode.setBallonCount(0);
+            ThreadNode.setPremierCount(0);
+            listThread = new LinkedList<ThreadNode>();
+            setViewCounters(0, 0);
+        }
 
         private void stopLastBallon_Click(object sender, RoutedEventArgs e)
         {
@@ -155,7 +167,24 @@ namespace WpfAppThreadExample
 
         private void StopAllThread_Click(object sender, RoutedEventArgs e)
         {
+            if (listThread.Count <= 0)
+                MessageBox.Show("No running thread", "Alert", MessageBoxButton.OK, MessageBoxImage.Information);
+            else
+                stopAllThread();
+        }
 
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("Do you really want quit?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+                stopAllThread();
+            else
+                e.Cancel = true;
+        }
+
+        private void Quit_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 
