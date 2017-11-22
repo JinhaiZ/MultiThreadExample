@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAppThreadExample", "WpfAppThreadExample\WpfAppThreadExample.csproj", "{2A6C0243-0DB6-491E-9E7F-CEC9A8C63C84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibrary1", "ClassLibrary1\ClassLibrary1.csproj", "{86A12852-A7BC-4DB4-A5CD-0F08CDB66874}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibraryPremier", "ClassLibrary1\ClassLibraryPremier.csproj", "{86A12852-A7BC-4DB4-A5CD-0F08CDB66874}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

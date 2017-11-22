@@ -5,18 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfAppThreadExample"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525"
-        Closing="Window_Closing">
+        Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <ListView Margin="113,52,143,102.8" Name="lvProcess" BorderBrush="{x:Null}">
+        <ListView Margin="105,52,106,102.8" Name="lvThread" BorderBrush="{x:Null}" ItemsSource="{Binding ThreadViewList}">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Thread Number" Width="120" DisplayMemberBinding="{Binding ThreadNumber}" />
+                    <GridViewColumn Header="Thread N°" Width="60" DisplayMemberBinding="{Binding ThreadNum}" />
                     <GridViewColumn Header="Type" Width="60" DisplayMemberBinding="{Binding Type}" />
                     <GridViewColumn Header="ID" Width="60" DisplayMemberBinding="{Binding ID}" />
+                    <GridViewColumn Header="State" Width="60" DisplayMemberBinding="{Binding State}" />
                 </GridView>
             </ListView.View>
-            <Button Content="Button" Height="100" Width="75"/>
         </ListView>
         <Menu HorizontalAlignment="Left" Height="24" VerticalAlignment="Top" Width="520">
             <MenuItem Header="Start Thread" Height="24" Width="100">
@@ -25,11 +24,11 @@
                 <MenuItem x:Name="startPremier" Header="Start premier" Click="startPremier_Click"/>
             </MenuItem>
             <MenuItem x:Name="stopMenu" Header="Pause/Restart" Height="24" Width="100"/>
-            <MenuItem Header="Stop" Height="24" Width="60" Click="MenuItem_Click" RenderTransformOrigin="0.975,0.378">
+            <MenuItem Header="Stop" Height="24" Width="60" RenderTransformOrigin="0.975,0.378">
                 <MenuItem x:Name="stopLastBallon" Header="Stop last created ballon" Click="stopLastBallon_Click"/>
                 <MenuItem x:Name="StopLastPremier" Header="Stop last created premier" Click="StopLastPremier_Click"/>
-                <MenuItem x:Name="StopLastProcess" Header="Stop last created process" Click="StopLastProcess_Click"/>
-                <MenuItem x:Name="StopAllProcess" Header="Stop all processes" Click="StopAllProcess_Click"/>
+                <MenuItem x:Name="StopLastThread" Header="Stop last created process" Click="StopLastThread_Click"/>
+                <MenuItem x:Name="StopAllThread" Header="Stop all processes" Click="StopAllThread_Click"/>
             </MenuItem>
             <MenuItem Header="Quit" Height="24" Width="100"/>
         </Menu>
