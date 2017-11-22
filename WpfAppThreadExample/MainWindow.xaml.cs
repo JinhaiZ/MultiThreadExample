@@ -26,7 +26,7 @@ namespace WpfAppThreadExample
     public partial class MainWindow : Window
     {
         private LinkedList<ThreadNode> listThread;
-        ObservableCollection<ThreadViewItem> threadViewList = new ObservableCollection<ThreadViewItem>();
+        public ObservableCollection<ThreadViewItem> threadViewList = new ObservableCollection<ThreadViewItem>();
 
         public MainWindow()
         {
@@ -118,7 +118,14 @@ namespace WpfAppThreadExample
         {
             foreach (ThreadNode tN in listThread)
             {
-                tN.thread.Abort();
+                try
+                {
+                    tN.thread.Abort();
+                }
+                catch (ThreadStateException)
+                {
+                    tN.thread.Resume();
+                }
                 threadViewList.Remove(tN.threadViewItem);
             }
             ThreadNode.setBallonCount(0);
@@ -146,7 +153,6 @@ namespace WpfAppThreadExample
                 deleteItemFromList("premier");
             }
         }
-
 
         private void StopLastThread_Click(object sender, RoutedEventArgs e)
         {
@@ -185,6 +191,28 @@ namespace WpfAppThreadExample
         private void Quit_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void Suspend_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (ThreadNode tN in listThread)
+            {
+                tN.threadViewItem.State = "Suspending";
+                tN.thread.Suspend();
+            }
+            /*foreach (ThreadViewItem tN in threadViewList)
+            {
+                Debug.WriteLine(tN.State);
+            }*/
+        }
+
+        private void Resume_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (ThreadNode tN in listThread)
+            {
+                tN.thread.Resume();
+                tN.threadViewItem.State = "Running";
+            }
         }
     }
 

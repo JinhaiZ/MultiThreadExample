@@ -24,7 +24,10 @@
                 </MenuItem>
                 <MenuItem x:Name="startPremier" Header="Start premier" Click="startPremier_Click"/>
             </MenuItem>
-            <MenuItem x:Name="stopMenu" Header="Pause/Restart" Height="24" Width="100"/>
+            <MenuItem x:Name="stopMenu" Header="Suspend/Resume" Height="24" Width="100">
+                <MenuItem x:Name="Suspend" Header="Suspend all thread" Click="Suspend_Click" />
+                <MenuItem x:Name="Resume" Header="Resume all thread" Click="Resume_Click" />
+            </MenuItem>
             <MenuItem Header="Stop" Height="24" Width="60" RenderTransformOrigin="0.975,0.378">
                 <MenuItem x:Name="stopLastBallon" Header="Stop last created ballon" Click="stopLastBallon_Click"/>
                 <MenuItem x:Name="StopLastPremier" Header="Stop last created premier" Click="StopLastPremier_Click"/>
