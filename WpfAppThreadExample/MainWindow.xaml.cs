@@ -42,15 +42,11 @@ namespace WpfAppThreadExample
             get { return threadViewList; }
         }
 
-        private void startBallonMethod()
+        private void setViewCounters(int ballonCount, int premierCount)
         {
-            WindowBallon wb = new WindowBallon();
-            wb.Show();
-        }
-
-        private void methodThread()
-        {
-            this.Dispatcher.Invoke(startBallonMethod);
+            ballonCountView.Text = ballonCount.ToString();
+            premierCountView.Text = premierCount.ToString();
+            countView.Text = (ballonCount + premierCount).ToString();
         }
 
         private void addItemToList(string type, Thread t)
@@ -61,27 +57,71 @@ namespace WpfAppThreadExample
             threadViewList.Add(threadViewItem);
             //Debug.WriteLine(threadViewList.Count);
             listThread.AddLast(new ThreadNode(t, threadViewItem));
+            //update counters
+            setViewCounters(ThreadNode.getBallonCount(), ThreadNode.getPremierCount());
         }
+
         private void startBallon_Click(object sender, RoutedEventArgs e)
         {
+            Thread t = new Thread(() =>
+            {
+                WindowBallon wb = new WindowBallon();
+                wb.Show();
 
-            Thread t = new Thread(() => methodThread());
+                wb.Closed += (sender2, e2) =>
+                    wb.Dispatcher.InvokeShutdown();
+
+                System.Windows.Threading.Dispatcher.Run();
+            });
+
+            t.SetApartmentState(ApartmentState.STA);
             t.Start();
+            // inspired by the post : https://stackoverflow.com/questions/1111369/how-do-i-create-and-show-wpf-windows-on-separate-threads
             addItemToList("ballon", t);
 
         }
 
         private void startPremier_Click(object sender, RoutedEventArgs e)
         {
-            Thread t = new Thread(() => NombrePremier.Premier(1));
+            Thread t = new Thread(() => NombrePremier.Premier(ThreadNode.getPremierCount()));
             t.Start();
             addItemToList("premier", t);
         }
-
+        private void deleteItemFromList(string type)
+        {
+            for (int i = listThread.Count - 1; i >= 0; i--)
+            {
+                if (listThread.ElementAt(i).threadViewItem.Type == type)
+                {
+                    //get last node of type premier from the linkedlist
+                    ThreadNode toRemove = listThread.ElementAt(i);
+                    toRemove.thread.Abort();
+                    threadViewList.Remove(toRemove.threadViewItem);
+                    if (type == "premier")
+                    {
+                        ThreadNode.setPremierCount(ThreadNode.getPremierCount() - 1);
+                        //Debug.WriteLine("Premier Count: " + ThreadNode.getPremierCount().ToString());
+                    }
+                    else
+                    {
+                        ThreadNode.setBallonCount(ThreadNode.getBallonCount() - 1);
+                        //Debug.WriteLine("Ballon Count: " + ThreadNode.getBallonCount().ToString());
+                    }
+                    //update counters
+                    setViewCounters(ThreadNode.getBallonCount(), ThreadNode.getPremierCount());
+                    listThread.Remove(toRemove);
+                    break;
+                }
+            }
+        }
         private void stopLastBallon_Click(object sender, RoutedEventArgs e)
         {
-
-
+            if (listThread.Count <= 0 || ThreadNode.getBallonCount() <= 0)
+                MessageBox.Show("No running thread for ballon.exe", "Alert", MessageBoxButton.OK, MessageBoxImage.Information);
+            else
+            {
+                deleteItemFromList("ballon");
+            }
         }
 
         private void StopLastPremier_Click(object sender, RoutedEventArgs e)
@@ -90,20 +130,7 @@ namespace WpfAppThreadExample
                 MessageBox.Show("No running thread for premier.exe", "Alert", MessageBoxButton.OK, MessageBoxImage.Information);
             else
             {
-                for (int i = listThread.Count - 1; i >= 0; i--)
-                {
-                    if (listThread.ElementAt(i).threadViewItem.Type == "premier")
-                    {
-                        //get last node of type premier from the linkedlist
-                        ThreadNode toRemove = listThread.ElementAt(i);
-                        toRemove.thread.Abort();
-                        threadViewList.Remove(toRemove.threadViewItem);
-                        ThreadNode.setPremierCount(ThreadNode.getPremierCount() - 1);
-                        //setViewCounters(ThreadNode.getBallonCount(), ThreadNode.getPremierCount());
-                        listThread.Remove(toRemove);
-                        break;
-                    }
-                }
+                deleteItemFromList("premier");
             }
         }
 
