@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading;
 
-namespace ClassLibrary1
+namespace ClassLibraryPremier
 {
     public class NombrePremier
     {
-        public static void Premier()
+        public static void Premier(int number)
         {
             for (int p = 1; p < 1000000; p++)
             {
@@ -15,7 +15,7 @@ namespace ClassLibrary1
                     i++;
                 }
                 if (i == p)
-                    Console.WriteLine(p.ToString());
+                    Console.WriteLine("Thread <{0}> = {1}", number.ToString(), p.ToString());
                 Thread.Sleep(50);
 
             }
