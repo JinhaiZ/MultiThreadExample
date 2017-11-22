@@ -71,11 +71,16 @@ namespace WpfAppThreadExample
                 wb.Closed += (sender2, e2) =>
                     wb.Dispatcher.InvokeShutdown();
 
+                wb.Closed += (sender2, e2) =>
+                    checkClosedThread();
+                    
+
                 System.Windows.Threading.Dispatcher.Run();
             });
 
             t.SetApartmentState(ApartmentState.STA);
             t.Start();
+            Debug.WriteLine("isalive: "+t.IsAlive);
             // inspired by the post : https://stackoverflow.com/questions/1111369/how-do-i-create-and-show-wpf-windows-on-separate-threads
             addItemToList("ballon", t);
 
@@ -83,7 +88,13 @@ namespace WpfAppThreadExample
 
         private void startPremier_Click(object sender, RoutedEventArgs e)
         {
-            Thread t = new Thread(() => NombrePremier.Premier(ThreadNode.getPremierCount()));
+            ThreadStart ts = new ThreadStart(() => NombrePremier.Premier(ThreadNode.getPremierCount()));
+            ts += () => 
+            {
+                checkClosedThread();
+            };
+
+            Thread t = new Thread(ts);
             t.Start();
             addItemToList("premier", t);
         }
@@ -106,6 +117,7 @@ namespace WpfAppThreadExample
                     {
                         ThreadNode.setBallonCount(ThreadNode.getBallonCount() - 1);
                         //Debug.WriteLine("Ballon Count: " + ThreadNode.getBallonCount().ToString());
+                        Debug.WriteLine("isalive: " + toRemove.thread.IsAlive);
                     }
                     //update counters
                     setViewCounters(ThreadNode.getBallonCount(), ThreadNode.getPremierCount());
@@ -124,6 +136,7 @@ namespace WpfAppThreadExample
                 }
                 catch (ThreadStateException)
                 {
+                    Debug.WriteLine("exception !!!!");
                     tN.thread.Resume();
                 }
                 threadViewList.Remove(tN.threadViewItem);
@@ -213,6 +226,36 @@ namespace WpfAppThreadExample
                 tN.thread.Resume();
                 tN.threadViewItem.State = "Running";
             }
+        }
+
+        private void checkClosedThread()
+        {
+            Debug.WriteLine("checkClosedThread");
+            foreach (ThreadNode pN in listThread)
+            {
+                Debug.WriteLine("thread type {0}, id {1}, isalive {2}, status {3} ", 
+                    pN.threadViewItem.Type, pN.threadViewItem.ID, pN.thread.IsAlive.ToString(), pN.thread.ThreadState.ToString());
+                if (!pN.thread.IsAlive)
+                {
+                    App.Current.Dispatcher.Invoke((Action)delegate
+                    {
+                        threadViewList.Remove(pN.threadViewItem);
+                        if (pN.threadViewItem.Type == "ballon")
+                            ThreadNode.setBallonCount(ThreadNode.getBallonCount() - 1);
+                        else
+                            ThreadNode.setPremierCount(ThreadNode.getPremierCount() - 1);
+                        setViewCounters(ThreadNode.getBallonCount(), ThreadNode.getPremierCount());
+                        listThread.Remove(pN);
+                    });
+                    break;
+                }
+            }
+            /*
+            foreach (ThreadNode pN in listThread)
+            {
+                Debug.WriteLine("thread type {0}, id {1}, isalive {2}, status {3} ",
+                    pN.threadViewItem.Type, pN.threadViewItem.ID, pN.thread.IsAlive.ToString(), pN.thread.ThreadState.ToString());
+            }*/
         }
     }
 
