@@ -57,19 +57,22 @@ namespace WpfAppThreadExample
         {
             // créer un thread pour afficher le WindowBallon, bien que WindowBallon puisse être exécuté sans thread, 
             // le thread joue ici un rôle wrapper afin que les informations relatives au thread puissent être utilisées comme l'ID de thread
-            Thread t = new Thread(() =>
+            ThreadStart ts = new ThreadStart(() =>
             {
                 WindowBallon wb = new WindowBallon();
                 wb.Show();
+                // la valeur attribué au id serait son id
+                int id = ThreadNode.getCount();
                 // ajouter un event handler qui va être appelé lorsque WindowBallon est fermé, mettre à jour ListView
                 wb.Closed += (sender2, e2) =>
-                    checkClosedThread(sender2, e2);
+                    checkClosedThread(id);
                 // ajouter un event handler qui va être appelé lorsque WindowBallon est fermé, terminer le distributeur lorsque la fenêtre se ferme
                 wb.Closed += (sender2, e2) =>
                     wb.Dispatcher.InvokeShutdown();
 
                 System.Windows.Threading.Dispatcher.Run();
             });
+            Thread t = new Thread(ts);
             // Le thread appelant doit être STA, car les composants de l'interface utilisateur requièrent ça
             t.SetApartmentState(ApartmentState.STA);
             t.Start();
@@ -82,6 +85,8 @@ namespace WpfAppThreadExample
         private void startPremier_Click(object sender, RoutedEventArgs e)
         {
             ThreadStart ts = new ThreadStart(() => NombrePremier.Premier(ThreadNode.getPremierCount()));
+            // pas possible d'arrêter un thread de type premier par cliquer un croix rouge, donc
+            // les lignes suivantes sont commentées
             /*
             ts += () => 
             {
@@ -228,15 +233,14 @@ namespace WpfAppThreadExample
             }
         }
         // vérifier les threads fermées et les supprimer
-        private void checkClosedThread(object sender, EventArgs e)
+        private void checkClosedThread(int id)
         {
-            Debug.WriteLine("checkClosedThread");
-            Debug.WriteLine("sender {0}, event {1}", sender.ToString(), e.ToString());
+            Debug.WriteLine("checkClosedThread ID: {0}", id);
             foreach (ThreadNode pN in listThread)
             {
                 Debug.WriteLine("thread type {0}, id {1}, isalive {2}, status {3} ", 
-                    pN.threadViewItem.Type, pN.threadViewItem.ID, pN.thread.IsAlive.ToString(), pN.thread.ThreadState.ToString());
-                if (!pN.thread.IsAlive)
+                    pN.threadViewItem.Type, pN.getID(), pN.thread.IsAlive.ToString(), pN.thread.ThreadState.ToString());
+                if (pN.id == id)
                 {
                     App.Current.Dispatcher.Invoke((Action)delegate
                     {
@@ -281,6 +285,12 @@ namespace WpfAppThreadExample
         public ThreadViewItem threadViewItem;
         public static int ballonCount = 0;
         public static int premierCount = 0;
+        // count est un attribut de classe, c'est utilisé pour attribuer le valuer au attribut d'instance id
+        // il est initialisé par -1, donc le premier id est 0
+        public static int count = -1;
+        // pour identifier un élément dans la liste listThread, id est unique pour chaque instance de la classe ThreadNode
+        // id est utilisé pour supprimer un élément se trouve dans la liste UI ListView losque l'utilisatuer clique la croix rouge
+        public int id;
 
         public ThreadNode(Thread thread, ThreadViewItem threadViewItem)
         {
@@ -290,8 +300,19 @@ namespace WpfAppThreadExample
                 ballonCount += 1;
             else
                 premierCount += 1;
+            // l'ordre d'attribution est important
+            count += 1;
+            this.id = count;
+        }
+        public int getID()
+        {
+            return id;
         }
 
+        public static int getCount()
+        {
+            return count;
+        }
         public static int getBallonCount()
         {
             return ballonCount;
